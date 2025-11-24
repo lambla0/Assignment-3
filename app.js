@@ -1,4 +1,4 @@
-// Load environment variables from .env
+// Load environment variables
 require('dotenv').config();
 
 const express = require('express');
@@ -8,16 +8,18 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
+// Middleware for form data
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // serve CSS, images, etc.
 
-// Set EJS as templating engine
+// Serve static files (CSS, images, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Use EJS for templates
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// MongoDB connection
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log("MongoDB connection error:", err));
@@ -26,10 +28,11 @@ mongoose.connect(process.env.MONGO_URI)
 const carRoutes = require('./routes/cars');
 app.use('/cars', carRoutes);
 
-// Home page redirect to /cars
+// Splash homepage
 app.get('/', (req, res) => {
-  res.redirect('/cars');
+  res.render('index'); 
 });
 
 // Start server
-app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
+app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+
